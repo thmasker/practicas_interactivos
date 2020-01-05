@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>TFG API</title>
+
+    <!-- Codificación utilizada (UTF-8) para representar bien acentos, eñes, ...  -->
+    <meta charset="utf-8">
+
+    <!-- Etiqueta relacionada con Bootstrap. Sirve para ayudar a Bootstrap a escalar correctamente
+    el contenido de la página-aplicación según el tamaño de la ventana del navegador -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Hoja de estilo Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- Hoja de estilo Para usar los iconos de Font Awesome-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css">
+
+
+    <!-- Javascript (poner jQuery primero), Bootstrap & Knockout.js -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/js/main.js"></script>
+</head>
+
+<body>
+    <!-- Barra de navegación con subcomponentes diversos que automáticamente colapsa cuando el tamaño 
+    es menor que "Large" (<992 píxeles). Se emplea un estilo y un fondo en tonos claro, 
+    proporcionados por Bootstrap. Se configura como "siempre visible -->
+    <nav class="navbar navbar-expand-lg navbar-fixed-top  navbar-dark bg-primary">
+        <div class="container">
+            <!-- Logotipo - marca de la aplicación (usar clase navbar-brand aplicado sobre un <a></a>)
+                Se ha añadido un icono de Font Awesome que representa a un grupo de usuarios-->
+            <a href="index.html" class="navbar-brand"><i class="fas fa-users"></i>TFG API</a>
+            <!-- Ejemplo de botón colapsable para albergar las posibles secciones de la aplciación-->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!--Contenedor con lista de secciones colapsable-->
+            <div id="navbarNavDropdown" class="collapse navbar-collapse" id="navbarSecciones">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Usuarios</a>
+                    </li>
+                    <li class="nav-itemn active">
+                        <a class="nav-link" href="buildings.html">Edificios</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="cuerpo" class="container">
+        <!-- Tabla estilo cebra con datos vinculados  -->
+        <table class="table table-striped" style="margin-top:50px;">
+            <tr>
+                <td style="width: 1px;"></td>
+                <td><b>Nombre</b></td>
+				<td><b>Opciones</b></td>
+				<td><b>Consumos</b></td>
+				<td></td>
+            </tr>
+            <!-- ko foreach: buildings -->
+            <tr>
+                <td>
+                    <span data-bind="text: id" class="label"></span>
+				</td>
+				<td>
+                    <p><a data-bind="attr: {name}, text: name"></a></p>
+                </td>
+                <td>
+                    <button data-bind="click: $parent.editar" class="btn">Editar</button>
+                    <button id="lastbtn" data-bind="click: $parent.borrar" class="btn">Eliminar</button>
+                </td>
+                <td>
+                    <p>
+                        <input type = "text" id ="date" data-bind="value: date" placeholder="AAAA-MM-DD - AAAA-MM-DD" size="25" maxlength="23" style="text-align: center">
+                    </p>
+				</td>
+				<td><button data-bind="click: $parent.descargar" class="btn">Descargar</button></td>
+            </tr>
+            <!-- /ko -->
+        </table>
+        <div class="row">
+            <div class="col-12"><button data-bind="click: anadir" class="btn float-right" style="margin-bottom:50px;">Añadir Edificio</button></div>
+        </div>
+    </div>
+
+    <div id="anadir" class="modal hide fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5>Añadir Edificio</h5>
+                    <!-- data-dismiss cierra todos los cuadros modales abiertos -->
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputName">Nombre</label>
+                            <div class="controls">
+                                <input data-bind="value: name" type="text" id="inputName" placeholder="Ej. Edificio Fermín Caballero" style="width: 300px;">
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+                <div class="modal-footer">
+                    <button data-bind="click: anadirEdificio" type="button" class="btn btn-primary">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuadro de dialogo para editar un edificio -->
+    <div id="editar" class="modal hide fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5>Editar Edificio</h5>
+                    <!-- data-dismiss cierra todos los cuadros modales abiertos -->
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputName">Nombre</label>
+                            <div class="controls">
+                                <input data-bind="value: name" type="text" id="inputName placeholder="Ej. Edificio Fermín Caballero"
+                                    style="width: 300px;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bind="click: guardarModificacion" type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var picker = new Litepicker({
+            element: document.getElementById('date'),
+            format: 'YYYY-MM-DD',
+            lang: 'es-ES',
+            singleMode: false
+        });
+        console.log('yes');
+
+        function checkPattern(value) {
+            var re = /[12]\d{3}\-(0[1-9]|1[0-2]|[1-9])\-(0[1-9]|[12]\d|3[01]|[1-9])/;
+            return re.test(value);
+        }
+
+        function EdificiosViewModel() {
+            var self = this;
+            self.buildingsURI = 'http://localhost:2000/buildings/';
+			self.consumptionsURI = 'http://localhost:2000/consumptions/';
+            self.buildings = ko.observableArray();
+
+            self.miAjax = function (uri, method, data) {
+                var request = {
+                    url: uri,
+                    type: method,
+                    contentType: "application/json",
+                    accepts: "application/json",
+                    cache: false,
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    error: function (jqXHR) {
+                        console.log("Se ha producido un error: " + jqXHR.status);
+                    }
+                };
+
+                return $.ajax(request);
+            }
+
+            self.anadir = function () {
+                $('#anadir').modal('show');
+            }
+
+            self.guardarNuevo = function (building) {
+                self.miAjax(self.buildingsURI, 'POST', building).done(
+                    function(data) {
+                        self.buildings.push({
+                            id: ko.observable(data.building.id),
+                            name: ko.observable(data.building.name),
+                            date: ko.observable(data.building.date)
+                        });
+                    });
+            }
+
+            self.editar = function (building) {
+                editarEdificioViewModel.mostrarEdificio(building);
+                $('#editar').modal('show');
+            }
+
+            self.guardar = function (original, modificado) {
+                self.miAjax(self.buildingsURI + modificado.id + '/', 'PUT', modificado).done(
+                    function (data) {
+                        data.building.id = ko.observable(data.building.id);
+                        data.building.name = ko.observable(data.building.name);
+                        data.building.date = ko.observable(data.building.date);
+                        self.buildings.replace(original, data.building);
+                    });
+            }
+
+            self.borrar = function(building){
+                if(confirm("¿Está seguro de que desea eliminar el edificio: " + building.name() + "?")){
+                    self.miAjax(self.buildingsURI + building.id() + '/', 'DELETE').done(
+                        function(){
+                            self.buildings.remove(building);
+                        });
+                }
+            }
+
+            self.descargar = function(building){
+                var comienzo = building.startDate();
+                var final = building.endDate();
+
+                if(checkPattern(comienzo) && checkPattern(final)){
+                    self.miAjax(self.consumptionsURI + building.id() + '/' + comienzo + '/' + final + '/', 'GET').done(function(data){
+                        var newWin = open('localhost:2000/consumptions.json', 'Consumptions ' + building.id());
+                        newWin.document.write('<html><head><title>Consumos ' + building.name() + '</title></head><body><pre>' + JSON.stringify(data, null, 4) + '</pre></body></html>');
+                    });
+                } else {
+                    alert("La fecha introducida no es válida");
+                }
+            }
+
+            self.miAjax(self.buildingsURI, 'GET').done(function (data) {
+                for (var i = 0; i < data.buildings.length; i++) {
+                    self.buildings.push({
+                        id: ko.observable(data.buildings[i].id),
+                        name: ko.observable(data.buildings[i].name),
+                        date: ko.observable("")
+                    });
+                }
+            });
+        }
+
+        var edificiosViewModel = new EdificiosViewModel();
+
+        // Nuevo Modelo de Vista para añadir edificios
+        function AnadirEdificioViewModel() {
+            var self = this;
+            self.name = ko.observable();
+
+            self.anadirEdificio = function() {
+                $('#anadir').modal('hide');
+
+                edificiosViewModel.guardarNuevo({
+                    name: self.name(),
+                    date: ko.observable("")
+                });
+                self.name("");
+            }
+        }
+
+        // Nuevo Modelo de Vista para editar edificios
+        function EditarEdificioViewModel() {
+            var self = this;
+            self.id = ko.observable();
+            self.name = ko.observable();
+
+            self.mostrarEdificio = function(building) {
+                // Lo copia antes de modificarlo
+                self.building = building;
+                self.id(building.id());
+                self.name(building.name());
+            }
+
+            self.guardarModificacion = function(){
+                $('#editar').modal('hide');
+                edificiosViewModel.guardar(self.building, {
+                    id: self.id(),
+                    name: self.name(),
+                    date: ""
+                })
+            }
+        }
+        
+        var anadirEdificioViewModel = new AnadirEdificioViewModel();
+        ko.applyBindings(edificiosViewModel, $('#cuerpo')[0]);
+        ko.applyBindings(anadirEdificioViewModel, $('#anadir')[0]);
+        var editarEdificioViewModel = new EditarEdificioViewModel();
+        ko.applyBindings(editarEdificioViewModel, $('#editar')[0]);
+    </script>
+</body>
+</html>

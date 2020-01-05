@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>TFG API</title>
+
+    <!-- Codificación utilizada (UTF-8) para representar bien acentos, eñes, ...  -->
+    <meta charset="utf-8">
+
+    <!-- Meta-etiquetas para los robots araña de los buscadores
+    <meta name="description" content="Aplicación Web CRUS Usuarios (de ejemplo)">
+    <meta name="keywords" content="HTML5,CSS3,Javascript,jQuery,Bootstrap,Knockout.js, cliente Web, REST API"> -->
+
+    <!-- Etiqueta relacionada con Bootstrap. Sirve para ayudar a Bootstrap a escalar correctamente
+    el contenido de la página-aplicación según el tamaño de la ventana del navegador -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Hoja de estilo Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- Hoja de estilo Para usar los iconos de Font Awesome-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css">
+
+    <!-- Javascript (poner jQuery primero), Bootstrap & Knockout.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+</head>
+
+<body>
+
+    <!-- Barra de navegación con subcomponentes diversos que automáticamente colapsa cuando el tamaño 
+    es menor que "Large" (<992 píxeles). Se emplea un estilo y un fondo en tonos claro, 
+    proporcionados por Bootstrap. Se configura como "siempre visible -->
+    <nav class="navbar navbar-expand-lg navbar-fixed-top  navbar-dark bg-primary">
+        <div class="container">
+            <!-- Logotipo - marca de la aplicación (usar clase navbar-brand aplicado sobre un <a></a>)
+                Se ha añadido un icono de Font Awesome que representa a un grupo de usuarios-->
+            <a href="index.html" class="navbar-brand"><i class="fas fa-users"></i>TFG API</a>
+            <!-- Ejemplo de botón colapsable para albergar las posibles secciones de la aplciación-->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!--Contenedor con lista de secciones colapsable-->
+            <div id="navbarNavDropdown" class="collapse navbar-collapse" id="navbarSecciones">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="buildings.html">Edificios</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="cuerpo" class="container">
+        <!-- Tabla estilo cebra con datos vinculados  -->
+        <table class="table table-striped" style="margin-top:50px;">
+            <tr>
+                <td style="width: 1px;"></td>
+                <td><b>Email</b></td>
+                <td><b>Contraseña</b></td>
+                <td><b>Opciones</b></td>
+                <td><b>Estado</b></td>
+            </tr>
+            <!-- ko foreach: users -->
+            <tr>
+                <td>
+                    <span data-bind="text: id" class="label"></span>
+                </td>
+                <td>
+                    <p><a data-bind="attr: {href: 'mailto:' + email}, text: email"></a></p>
+                </td>
+                <td>
+                    <p><a data-bind="attr: {password}, text: password"></a></p>
+                </td>
+                <td>
+                    <button data-bind="click: $parent.editar" class="btn">Editar</button>
+                    <button data-bind="click: $parent.borrar" class="btn">Eliminar</button>
+                </td>
+                <td>
+                    <span data-bind="visible: logged" class="badge badge-success">Activo</span>
+                    <span data-bind="visible: !logged()" class="badge badge-danger">Inactivo</span>
+                </td>
+            </tr>
+            <!-- /ko -->
+        </table>
+        <div class="row">
+            <div class="col-12"><button data-bind="click: anadir" class="btn float-right" style="margin-bottom:50px;">Añadir Usuario</button></div>
+        </div>
+    </div>
+
+    <div id="anadir" class="modal hide fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5>Añadir Usuario</h5>
+                    <!-- data-dismiss cierra todos los cuadros modales abiertos -->
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputEmail">Email</label>
+                            <div class="controls">
+                                <input data-bind="value: email" type="email" id="inputEmail" placeholder="Ej. diego.pedregal@alu.uclm.es" style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputEmail">Contraseña</label>
+                            <div class="controls">
+                                <input data-bind="value: password" type="password" id="inputPassword" placeholder="******************" style="width: 300px;">
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+                <div class="modal-footer">
+                    <button data-bind="click: anadirUsuario" type="button" class="btn btn-primary">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuadro de dialogo para editar un usuario -->
+    <div id="editar" class="modal hide fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5>Editar Usuario</h5>
+                    <!-- data-dismiss cierra todos los cuadros modales abiertos -->
+                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputEmail">Email</label>
+                            <div class="controls">
+                                <input data-bind="value: email" type="email" id="inputEmail" placeholder="Ej. diego.pedregal@alu.uclm.es"
+                                    style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="control-group" style="margin-top:20px;">
+                            <label class="control-label" for="inputEmail">Contraseña</label>
+                            <div class="controls">
+                                <input data-bind="value: password" type="password" id="inputPassword" placeholder="********************"
+                                    style="width: 300px;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button data-bind="click: guardarModificacion" type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // Código Javascript
+        function UsuariosViewModel() {
+            var self = this;
+            self.usersURI = 'http://localhost:2000/users/';
+            self.users = ko.observableArray();
+
+            self.miAjax = function (uri, method, data) {
+                var request = {
+                    url: uri,
+                    type: method,
+                    contentType: "application/json",
+                    accepts: "application/json",
+                    cache: false,
+                    dataType: 'json',
+                    data: JSON.stringify(data),
+                    error: function (jqXHR) {
+                        console.log("Se ha producido un error: " + jqXHR.status);
+                    }
+                };
+
+                return $.ajax(request);
+            }
+
+            self.anadir = function () {
+                $('#anadir').modal('show');
+            }
+
+            self.guardarNuevo = function (user) {
+                self.miAjax(self.usersURI, 'POST', user).done(
+                    function(data) {
+                        self.users.push({
+                            id: ko.observable(data.user.id),
+                            email: ko.observable(data.user.email),
+                            password: ko.observable(data.user.password),
+                            logged: ko.observable(data.user.logged)
+                        });
+                    });
+            }
+
+            self.editar = function (user) {
+                editarUsuarioViewModel.mostrarUsuario(user);
+                $('#editar').modal('show');
+            }
+
+            self.guardar = function (usuarioOriginal, usuarioModificado) {
+                self.miAjax(self.usersURI + usuarioModificado.id + '/', 'PUT', usuarioModificado).done(
+                    function (data) {
+                        data.user.id = ko.observable(data.user.id);
+                        data.user.email = ko.observable(data.user.email);
+                        data.user.password = ko.observable(data.user.password);
+                        data.user.logged = ko.observable(data.user.logged);
+                        self.users.replace(usuarioOriginal, data.user);
+                    });
+            }
+
+            self.borrar = function(user){
+                if(confirm("¿Está seguro de que desea eliminar el usuario: " + user.email() + "?")){
+                    self.miAjax(self.usersURI + user.id() + '/', 'DELETE').done(
+                        function(){
+                            self.users.remove(user);
+                        });
+                }
+            }
+
+            // Para el get que obtiene la colección de usuarios completa NO pasamos datos
+            self.miAjax(self.usersURI, 'GET').done(function (data) {
+                for (var i = 0; i < data.users.length; i++) {
+                    self.users.push({
+                        id: ko.observable(data.users[i].id),
+                        email: ko.observable(data.users[i].email),
+                        password: ko.observable(data.users[i].password),
+                        logged: ko.observable(data.users[i].logged)
+                    });
+                }
+            });
+        }
+
+        var usuariosViewModel = new UsuariosViewModel();
+
+        // Nuevo Modelo de Vista para añadir usuarios
+        function AnadirUsuarioViewModel() {
+            var self = this;
+            self.email = ko.observable();
+            self.password = ko.observable();
+
+            self.anadirUsuario = function() {
+                $('#anadir').modal('hide');
+
+                usuariosViewModel.guardarNuevo({
+                    email: self.email(),
+                    password: self.password(),
+                });
+                self.email("");
+                self.password("");
+            }
+        }
+
+        // Nuevo Modelo de Vista para editar usuarios
+        function EditarUsuarioViewModel() {
+            var self = this;
+            self.id = ko.observable();
+            self.email = ko.observable();
+            self.password = ko.observable();
+            self.logged= ko.observable(true);
+
+            self.mostrarUsuario = function(user) {
+                // Lo copia antes de modificarlo
+                self.user = user;
+                self.id(user.id())
+                self.email(user.email());
+                self.password(user.password());
+                self.logged(user.logged());
+            }
+
+            self.guardarModificacion = function(){
+                $('#editar').modal('hide');
+                usuariosViewModel.guardar(self.user, {
+                    id: self.id(),
+                    email: self.email(),
+                    password: self.password(),
+                    logged: self.logged()
+                })
+            }
+        }
+        
+        var anadirUsuarioViewModel = new AnadirUsuarioViewModel();
+        ko.applyBindings(usuariosViewModel, $('#cuerpo')[0]);
+        ko.applyBindings(anadirUsuarioViewModel, $('#anadir')[0]);
+        var editarUsuarioViewModel = new EditarUsuarioViewModel();
+        ko.applyBindings(editarUsuarioViewModel, $('#editar')[0]);
+    </script>
+</body>
+</html>
