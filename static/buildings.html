@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <!-- Hoja de estilo Para usar los iconos de Font Awesome-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css">
+    <link rel="stylesheet" href="css/buildings.css">
 
 
     <!-- Javascript (poner jQuery primero), Bootstrap & Knockout.js -->
@@ -61,7 +62,7 @@
 				<td><b>Consumos</b></td>
 				<td></td>
             </tr>
-            <!-- ko foreach: buildings -->
+            <!-- ko foreach: buildings-->
             <tr>
                 <td>
                     <span data-bind="text: id" class="label"></span>
@@ -149,7 +150,6 @@
             lang: 'es-ES',
             singleMode: false
         });
-        console.log('yes');
 
         function checkPattern(value) {
             var re = /[12]\d{3}\-(0[1-9]|1[0-2]|[1-9])\-(0[1-9]|[12]\d|3[01]|[1-9])/;
